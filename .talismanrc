@@ -1,0 +1,6 @@
+fileignoreconfig:
+- filename: backend.tf
+  checksum: 9dab9aa6a619351a4a701c8a6464ebbc044e70798ef5c0bf15beaab1fe46efff
+- filename: backend_support/dynamodb.tf
+  checksum: 485b4a8706df51aeabff580adda45bb42e272ffbcc7076487f37ea1632f815a5
+version: "1.0"
