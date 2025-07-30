@@ -11,7 +11,7 @@ resource "aws_subnet" "public_subnet1" {
     vpc_id=aws_vpc.vpc.id
     cidr_block=var.subnet1_cidr
     availability_zone=format("%sa",var.region)
-    map_public_ip_on_launch=true
+    map_public_ip_on_launch="true"
     tags={
         Name=format("%s-public-subnet-1",var.prefix)
     }
@@ -60,6 +60,10 @@ resource "aws_subnet" "secure_subnet2"{
     tags={
         Name=format("%s-secure-subnet-2",var.prefix)
     }
+}
+resource "aws_subnet" "custom_subnet1" {
+    vpc_id = aws_vpc.vpc.id
+    cidr_block = "192.168.1.96/28"
 }
 resource "aws_internet_gateway" "igw"{
     vpc_id=aws_vpc.vpc.id
