@@ -61,10 +61,21 @@ resource "aws_subnet" "secure_subnet2"{
         Name=format("%s-secure-subnet-2",var.prefix)
     }
 }
-resource "aws_subnet" "custom_subnet1" {
-    vpc_id = aws_vpc.vpc.id
-    cidr_block = "192.168.1.96/28"
+
+resource "aws_subnet" "custom_subnet" {
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = "192.168.1.96/28"
+    tags = {
+    Name = "${var.prefix}-custom-subnet"
+  }
+  # (resource-type-specific configuration)
 }
+
+moved {
+  from = aws_subnet.custom_subnet1
+  to   = aws_subnet.custom_subnet
+}
+
 resource "aws_internet_gateway" "igw"{
     vpc_id=aws_vpc.vpc.id
     tags={
