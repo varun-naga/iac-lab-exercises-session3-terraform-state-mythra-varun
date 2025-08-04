@@ -1,3 +1,5 @@
+data "aws_availability_zones" "available" {}
+
 resource "aws_vpc" "vpc"{
     cidr_block=var.vpc_cidr
     enable_dns_support   = "true"
@@ -7,75 +9,36 @@ resource "aws_vpc" "vpc"{
         Name="${var.prefix}-vpc"    
     }
 }
-resource "aws_subnet" "public_subnet1" {
-    vpc_id=aws_vpc.vpc.id
-    cidr_block=var.subnet1_cidr
-    availability_zone=format("%sa",var.region)
-    map_public_ip_on_launch="true"
-    tags={
-        Name=format("%s-public-subnet-1",var.prefix)
-    }
-}
-resource "aws_subnet" "public_subnet2"{
-    vpc_id=aws_vpc.vpc.id
-    cidr_block=var.subnet2_cidr
-    availability_zone=format("%sb",var.region)
-    map_public_ip_on_launch = "true"
-    tags={
-        Name=format("%s-public-subnet-2",var.prefix)
-    }
-}
-resource "aws_subnet" "private_subnet1"{
-    vpc_id = aws_vpc.vpc.id
-    cidr_block=var.subnet3_cidr
-    availability_zone=format("%sa",var.region)
-    map_public_ip_on_launch = "false"
-    tags={
-        Name=format("%s-private-subnet-1",var.prefix)
-    }
-}
-resource "aws_subnet" "private_subnet2"{
-    vpc_id=aws_vpc.vpc.id
-    cidr_block=var.subnet4_cidr
-    availability_zone=format("%sb",var.region)
-    map_public_ip_on_launch = "false"
-    tags={
-        Name=format("%s-private-subnet-2",var.prefix)
-    }
-}
-resource "aws_subnet" "secure_subnet1" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = var.subnet5_cidr
-  availability_zone = format("%sa", var.region)
-  map_public_ip_on_launch = "false"
-  tags={
-    Name=format("%s-secure-subnet-1",var.prefix)
+resource "aws_subnet" "public_subnet" {
+  # Create one instance for each subnet
+  count = var.number_of_public_subnets
+  vpc_id     = aws_vpc.vpc.id
+  tags = {
+    Name = format("%s-public-subnet-${count.index+1}",var.prefix)
   }
+  cidr_block = cidrsubnet(var.vpc_cidr, 3, count.index)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 }
-resource "aws_subnet" "secure_subnet2"{
-    vpc_id=aws_vpc.vpc.id
-    cidr_block=var.subnet6_cidr
-    availability_zone=format("%sb",var.region)
-    map_public_ip_on_launch = "false"
-    tags={
-        Name=format("%s-secure-subnet-2",var.prefix)
-    }
-}
-
-resource "aws_subnet" "custom_subnet" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = "192.168.1.96/28"
-    tags = {
-    Name = "${var.prefix}-custom-subnet"
+resource "aws_subnet" "private_subnet" {
+  # Create one instance for each subnet
+  count = var.number_of_private_subnets
+  vpc_id     = aws_vpc.vpc.id
+  tags = {
+    Name = format("%s-private-subnet-${count.index+1}",var.prefix)
   }
-  # (resource-type-specific configuration)
+  cidr_block = cidrsubnet(var.vpc_cidr, 3, count.index+2)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 }
-
-moved {
-  from = aws_subnet.custom_subnet1
-  to   = aws_subnet.custom_subnet
+resource "aws_subnet" "secure_subnet" {
+  # Create one instance for each subnet
+  count = var.number_of_private_subnets
+  vpc_id     = aws_vpc.vpc.id
+  tags = {
+    Name = format("%s-secure-subnet-${count.index+1}",var.prefix)
+  }
+  cidr_block = cidrsubnet(var.vpc_cidr, 3, count.index+4)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 }
-
 resource "aws_internet_gateway" "igw"{
     vpc_id=aws_vpc.vpc.id
     tags={
@@ -88,7 +51,7 @@ resource "aws_eip" "nat"{
 }
 resource "aws_nat_gateway" "nat_gw"{
     allocation_id=aws_eip.nat.id
-    subnet_id = aws_subnet.public_subnet1.id
+    subnet_id = aws_subnet.public_subnet[0].id
     tags={
         Name=format("%s-nat-gw",var.prefix)
     }
@@ -116,33 +79,28 @@ resource "aws_route_table""private_routetable"{
 }
 resource "aws_route_table" "secure_routetable"{
     vpc_id=aws_vpc.vpc.id
+    tags={
+        Name=format("%s-secure-route-table",var.prefix)
+    }
     # route{
     #     cidr_block=var.vpc_cidr
     #     gateway_id = "local"
         
     # }
 }
-resource "aws_route_table_association" "public_subnet_1_accociation" {
-    subnet_id=aws_subnet.public_subnet1.id
+resource "aws_route_table_association" "public_subnet_association" {
+    # for_each = toset(range(var.number_of_public_subnets))
+    count = var.number_of_public_subnets
+    subnet_id=aws_subnet.public_subnet[count.index].id
     route_table_id=aws_route_table.public_routetable.id
 }
-resource "aws_route_table_association" "public_subnet_2_association"{
-    subnet_id=aws_subnet.public_subnet2.id
-    route_table_id=aws_route_table.public_routetable.id
-}
-resource "aws_route_table_association" "private_subnet_1_association" {
-    subnet_id=aws_subnet.private_subnet1.id
+resource "aws_route_table_association" "private_subnet_association"{
+    count = var.number_of_private_subnets
+    subnet_id=aws_subnet.private_subnet[count.index].id
     route_table_id=aws_route_table.private_routetable.id
 }
-resource "aws_route_table_association" "private_subnet_2_association"{
-    subnet_id=aws_subnet.private_subnet2.id
-    route_table_id=aws_route_table.private_routetable.id
-}
-resource "aws_route_table_association" "secure_subnet_1_association"{
-    subnet_id=aws_subnet.secure_subnet1.id
-    route_table_id = aws_route_table.secure_routetable.id
-}
-resource "aws_route_table_association" "secure_subnet_2_association"{
-    subnet_id=aws_subnet.secure_subnet2.id
-    route_table_id = aws_route_table.secure_routetable.id
+resource "aws_route_table_association" "secure_subnet_association" {
+    count = var.number_of_secure_subnets
+    subnet_id=aws_subnet.secure_subnet[count.index].id
+    route_table_id=aws_route_table.secure_routetable.id
 }
