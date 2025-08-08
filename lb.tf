@@ -7,21 +7,21 @@ resource "aws_lb" "lb" {
 
   enable_deletion_protection = true
 
-#   access_logs {
-#     bucket  = aws_s3_bucket.lb_logs.id
-#     prefix  = "test-lb"
-#     enabled = true
-#   }
+  #   access_logs {
+  #     bucket  = aws_s3_bucket.lb_logs.id
+  #     prefix  = "test-lb"
+  #     enabled = true
+  #   }
 
   tags = {
-    Name = format("%s-lb",var.prefix)
+    Name = format("%s-lb", var.prefix)
   }
 }
 resource "aws_lb_target_group" "tg" {
-  name     = format("%s-tg",var.prefix)
-  port     = 8000
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.vpc.id
+  name        = format("%s-tg", var.prefix)
+  port        = 8000
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.vpc.id
   target_type = "ip"
   health_check {
     healthy_threshold   = "5"
@@ -49,7 +49,7 @@ resource "aws_security_group" "lb_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   tags = {
-    Name = format("%s-lb-sg",var.prefix)
+    Name = format("%s-lb-sg", var.prefix)
   }
 
   egress {
@@ -64,13 +64,13 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    self        = true
-    }
+  }
+  ingress {
+    from_port = 8000
+    to_port   = 8000
+    protocol  = "tcp"
+    self      = true
+  }
 }
 
   
