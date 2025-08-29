@@ -25,11 +25,41 @@ variable "number_of_secure_subnets" {
   type        = number
   default     = 2
 }
-variable "vpc_id" {}
+variable "vpc_id" {
+
+}
+variable"lb_sg"{
+
+}
 variable "private_subnet_ids" {
   //type = list(string)
 }
-variable lb_sg{
+variable alb_security_group_id{
+    description = "Security group ID associated with the ALB"
+    type        = string
 }
 variable "alb_target_group_arn" {
+    # description = "ARN of the ALB target group"
+    # type        = string
 }
+variable"db_address"{
+    description = "RDS endpoint address"
+    type        = string
+}
+variable"db_name"{
+    description = "Database name"
+    type        = string
+}  
+variable"db_username"{
+    description = "Database username"
+    type        = string
+}
+variable"db_secret_arn"{
+    description = "ARN of the Secrets Manager secret for DB password"
+    type        = string
+}
+variable"db_secret_key_id"{
+    description = "Key ID in the Secrets Manager secret for DB password"
+    type        = string
+}           
+                

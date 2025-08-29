@@ -25,3 +25,12 @@ variable "number_of_secure_subnets" {
   type        = number
   default     = 2
 }
+variable "db_username" {
+  type        = string
+  description = "Database username"
+}
+
+variable "db_name" {
+  type        = string
+  description = "Database name"
+}

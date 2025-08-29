@@ -40,7 +40,7 @@ resource "aws_ecs_service" "this" {
   }
 
   load_balancer {
-    target_group_arn = var.alb_target_group_arn.arn
+    target_group_arn = var.alb_target_group_arn
     container_name   = "example_app"
     container_port   = 8000
   }
@@ -67,7 +67,15 @@ resource "aws_ecs_task_definition" "this" {
     image_url        = aws_ecr_repository.api.repository_url
     cloudwatch_group = aws_cloudwatch_log_group.ecs.name
     region           = var.region
+    db_address       = var.db_address
+    db_name          = var.db_name
+    db_username      = var.db_username
+    db_password_arn  = var.db_secret_arn
   })
+
+  runtime_platform {
+    cpu_architecture = "ARM64" #or "X86_64" if not running on M1 chipset 
+  }
 }
 resource "aws_security_group" "ecs" {
   name   = format("%s-ecs-sg", var.prefix)
@@ -79,7 +87,7 @@ resource "aws_security_group" "ecs" {
     to_port         = 8000
     protocol        = "tcp"
     //security_groups = [aws_security_group.lb_sg.id]
-    security_groups = [var.lb_sg.id]
+    security_groups = [var.lb_sg]
   }
 
   egress {

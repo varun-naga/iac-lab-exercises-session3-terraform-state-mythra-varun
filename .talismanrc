@@ -3,4 +3,14 @@ fileignoreconfig:
   checksum: 49685033242983935cfd549f448529fffbbf6a54b947ec5f634925d94ff2a0df
 - filename: backend_support/dynamodb.tf
   checksum: 485b4a8706df51aeabff580adda45bb42e272ffbcc7076487f37ea1632f815a5
+- filename: ecs.tf
+  checksum: 059cf43e0c5a2d727c68d494659a6babc84454238126ffd06634c79a22ee7587
+- filename: modules/ecs/ecs.tf
+  checksum: b0cb232a731b82336dd6c084e0086d4041494ff3bdd282f96a401c1930ebaa83
+- filename: modules/rds/rds.tf
+  checksum: 3df93b2520f3de7b664a6d128a113709919ce46fbd07c4ec9fc36fab8512aa03
+- filename: rds.tf
+  checksum: 87b33cb0951d11d734b21d60a44af6563f9b27073c802a2c13050cb83a103069
+- filename: templates/container.json
+  checksum: 6a92a3c14ef90e00676c060b6fc35869c3b27383524f98b3ce1e62a8fdeec969
 version: "1.0"

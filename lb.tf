@@ -4,8 +4,8 @@ resource "aws_lb" "lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
   subnets            = [for subnet in module.vpc.private_subnets : subnet]
-    //subnets          = private_subnet_ids
-    enable_deletion_protection = true
+  //subnets          = private_subnet_ids
+  enable_deletion_protection = true
 
   #   access_logs {
   #     bucket  = aws_s3_bucket.lb_logs.id
@@ -18,9 +18,9 @@ resource "aws_lb" "lb" {
   }
 }
 resource "aws_lb_target_group" "tg" {
-  name        = format("%s-tg", var.prefix)
-  port        = 8000
-  protocol    = "HTTP"
+  name     = format("%s-tg", var.prefix)
+  port     = 8000
+  protocol = "HTTP"
   //vpc_id      = aws_vpc.vpc.id
   vpc_id      = module.vpc.vpc_id
   target_type = "ip"
@@ -48,7 +48,7 @@ resource "aws_security_group" "lb_sg" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic and all outbound traffic"
   //vpc_id      = aws_vpc.vpc.id
-  vpc_id      = module.vpc.vpc_id
+  vpc_id = module.vpc.vpc_id
   tags = {
     Name = format("%s-lb-sg", var.prefix)
   }
