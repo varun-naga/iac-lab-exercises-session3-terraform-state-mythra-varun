@@ -39,8 +39,8 @@ variable alb_security_group_id{
     type        = string
 }
 variable "alb_target_group_arn" {
-    # description = "ARN of the ALB target group"
-    # type        = string
+     description = "ARN of the ALB target group"
+     type        = string
 }
 variable"db_address"{
     description = "RDS endpoint address"

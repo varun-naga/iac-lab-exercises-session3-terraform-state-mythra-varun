@@ -1,4 +1,6 @@
 fileignoreconfig:
+- filename: .github/workflows/deploy_infra.yml
+  checksum: 3ef17171a7ee5c904097b897dd890a2257338f2dcb531841c393df3b3b817d36
 - filename: backend.tf
   checksum: 49685033242983935cfd549f448529fffbbf6a54b947ec5f634925d94ff2a0df
 - filename: backend_support/dynamodb.tf
