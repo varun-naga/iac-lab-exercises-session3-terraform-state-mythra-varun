@@ -13,4 +13,6 @@ fileignoreconfig:
   checksum: 87b33cb0951d11d734b21d60a44af6563f9b27073c802a2c13050cb83a103069
 - filename: templates/container.json
   checksum: 6a92a3c14ef90e00676c060b6fc35869c3b27383524f98b3ce1e62a8fdeec969
+- filename: tf_prerequsites/iam-github.tf
+  checksum: 34c4df1f79c8eb8aa11a63d4a972303480d9636926302e91f2e7e940f3b2b2a2
 version: "1.0"
